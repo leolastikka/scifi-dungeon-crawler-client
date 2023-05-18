@@ -1,14 +1,14 @@
 import { State } from './State';
-import { LoadUI } from '../ui/LoadUI';
 import { Assets } from '../Assets';
 
 export class LoadState extends State {
-  private assets: Assets | null;
+  private assets: Assets;
+  private listElement: HTMLElement;
 
   public constructor(assets: Assets) {
-    super();
+    super('load-gui');
     this.assets = assets;
-    this.gui = new LoadUI();
+    this.listElement = document.getElementById('load-list');
   }
 
   public loadAssets(onLoad: () => void, onError: () => void): void {
@@ -16,15 +16,28 @@ export class LoadState extends State {
   }
 
   private onAssetsProgress(url: string, loaded: number, total: number) {
-    (this.gui! as LoadUI).updateProgress(loaded, total);
+    const li = document.createElement('li');
+    li.innerHTML = `Loaded ${loaded}/${total} assets`;
+    this.listElement!.appendChild(li);
   }
 
   protected bindMethods(): void {
     this.onAssetsProgress = this.onAssetsProgress.bind(this);
   }
 
+  protected createHTMLString(): string {
+    return `
+    <ul id="load-list">
+      <li>Scifi Dungeon Crawler</li>
+      <li></li>
+      <li id="load-progress">Loading assets...</li>
+    </ul>
+    `;
+  }
+
   public destructor(): void {
     this.assets = null;
+    this.listElement = null;
     super.destructor();
   }
 }

@@ -1,5 +1,4 @@
 import { Connection } from '../Connection';
-import { ConnectUI } from '../ui/ConnectUI';
 import { State } from './State';
 
 export class ConnectState extends State {
@@ -8,9 +7,8 @@ export class ConnectState extends State {
   private onConnectError: () => void;
 
   constructor(connection: Connection) {
-    super();
+    super('connect-gui');
     this.bindMethods();
-    this.gui = new ConnectUI();
     this.connection = connection;
   }
 
@@ -32,6 +30,16 @@ export class ConnectState extends State {
   protected bindMethods(): void {
     this.onOpen = this.onOpen.bind(this);
     this.onError = this.onError.bind(this);
+  }
+
+  protected createHTMLString(): string {
+    return `
+    <ul>
+      <li>Scifi Dungeon Crawler</li>
+      <li></li>
+      <li>Connecting to login server...</li>
+    </ul>
+    `;
   }
 
   public destructor(): void {
