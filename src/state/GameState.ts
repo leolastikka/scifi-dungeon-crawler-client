@@ -46,6 +46,7 @@ export class GameState extends State {
     this.connection.addEventListener('error', this.onConnectError);
     this.connection.addEventListener('close', this.onConnectClose);
     window.addEventListener('resize', this.onWindowResize);
+    document.addEventListener('keypress', this.onKeyPress);
 
     this.logoutButton.addEventListener('click', this.onClickLogout);
     this.moveForwardButton.addEventListener('click', this.onClickMovement);
@@ -98,6 +99,44 @@ export class GameState extends State {
     });
   }
 
+  private onKeyPress(event: KeyboardEvent): void {
+    let movement: string;
+    let type: string;
+    switch(event.code) {
+    case 'KeyW':
+      movement = 'move-forward';
+      type = 'move';
+      break;
+    case 'KeyS':
+      movement = 'move-back';
+      type = 'move';
+      break;
+    case 'KeyA':
+      movement = 'move-left';
+      type = 'move';
+      break;
+    case 'KeyD':
+      movement = 'move-right';
+      type = 'move';
+      break;
+    case 'KeyQ':
+      movement = 'turn-left';
+      type = 'turn';
+      break;
+    case 'KeyE':
+      movement = 'turn-right';
+      type = 'turn';
+      break;
+    default:
+      return;
+    }
+    this.world.movePlayer({
+      networkId: this.entity.networkId,
+      type: type,
+      movement: movement
+    });
+  }
+
   private onWindowResize(): void {
     const width = Math.min(this.gameScreen.clientWidth, window.innerWidth);
     this.world.resizeRenderer(
@@ -114,6 +153,7 @@ export class GameState extends State {
     this.update = this.update.bind(this);
     this.onMessage = this.onMessage.bind(this);
     this.onWindowResize = this.onWindowResize.bind(this);
+    this.onKeyPress = this.onKeyPress.bind(this);
     this.onClickLogout = this.onClickLogout.bind(this);
     this.onClickMovement = this.onClickMovement.bind(this);
   }
@@ -158,6 +198,7 @@ export class GameState extends State {
     this.connection.removeEventListener('error', this.onConnectError);
     this.connection.removeEventListener('close', this.onConnectClose);
     window.removeEventListener('resize', this.onWindowResize);
+    document.removeEventListener('keypress', this.onKeyPress);
 
     this.logoutButton.removeEventListener('click', this.onClickLogout);
     this.logoutButton.removeEventListener('click', this.onClickLogout);
