@@ -7,7 +7,7 @@ export class ConnectState extends State {
   private onConnectError: () => void;
 
   constructor(connection: Connection) {
-    super('connect-gui');
+    super('connect-state');
     this.bindMethods();
     this.connection = connection;
   }

@@ -1,6 +1,5 @@
 export class Connection extends EventTarget{
   private socket: WebSocket;
-  private user: object;
 
   public constructor(wsUrl: string) {
     super();
@@ -16,7 +15,11 @@ export class Connection extends EventTarget{
     this.socket.send(data);
   }
 
-  private onOpen(ev: Event): any {
+  public close(): void {
+    this.socket.close();
+  }
+
+  private onOpen(ev: Event): void {
     this.dispatchEvent(new Event(ev.type));
   }
 
@@ -26,18 +29,22 @@ export class Connection extends EventTarget{
     }));
   }
 
-  private onError(ev: Event) {
+  private onError(ev: Event): void {
     this.dispatchEvent(new Event(ev.type));
   }
 
-  private onClose(ev: Event) {
+  private onClose(ev: Event): void {
     this.dispatchEvent(new Event(ev.type));
   }
 
-  private bindMethods() {
+  private bindMethods(): void {
     this.onOpen = this.onOpen.bind(this);
     this.onMessage = this.onMessage.bind(this);
     this.onError = this.onError.bind(this);
     this.onClose = this.onClose.bind(this);
+  }
+
+  public destructor(): void {
+    this.socket = null;
   }
 }

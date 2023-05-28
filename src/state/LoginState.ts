@@ -8,19 +8,23 @@ export class LoginState extends State {
 
   private connection: Connection;
   private onLogin: () => void;
+  private onConnectClose: () => void;
   private onConnectError: () => void;
 
   constructor(connection: Connection,
               onLogin: () => void,
+              onConnectClose: () => void,
               onConnectError: () => void) {
-    super('login-gui');
+    super('login-state');
     this.bindMethods();
 
     this.connection = connection;
     this.onLogin = onLogin;
+    this.onConnectClose = onConnectClose;
     this.onConnectError = onConnectError;
 
     this.connection.addEventListener('message', this.onMessage);
+    this.connection.addEventListener('close', this.onConnectClose);
     this.connection.addEventListener('error', this.onConnectError);
 
     this.submitButton = document.getElementById('login-submit') as
@@ -39,9 +43,16 @@ export class LoginState extends State {
   }
 
   private onLoginSubmit(): void {
+    const username = this.usernameInput.value;
+    const password = this.passwordInput.value;
+
+    if (!username || !password) {
+      return;
+    }
+
     this.connection.send(JSON.stringify({
-      username: this.usernameInput.value,
-      password: this.passwordInput.value
+      username: username,
+      password: password
     }));
   }
 
@@ -57,9 +68,9 @@ export class LoginState extends State {
       <li>Login</li>
       <li></li>
       <li>Username</li>
-      <li><input type="text" id="username"></li>
+      <li><input type="text" id="username" value="test" required></li>
       <li>Password</li>
-      <li><input type="password" id="password"></li>
+      <li><input type="password" id="password" value="test" required></li>
       <li></li>
       <li><button id="login-submit">Login</button></li>
     </ul>
@@ -73,6 +84,7 @@ export class LoginState extends State {
     this.passwordInput = null;
 
     this.connection.removeEventListener('message', this.onMessage);
+    this.connection.removeEventListener('close', this.onConnectClose);
     this.connection.removeEventListener('error', this.onConnectError);
     this.connection = null;
     this.onConnectError = null;

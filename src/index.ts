@@ -35,7 +35,7 @@ class Main {
 
   private onConnect(): void {
     this.state.destructor();
-    this.state = new LoginState(this.connection, this.onLogin, this.onConnectError);
+    this.state = new LoginState(this.connection, this.onLogin, this.onConnectClose, this.onConnectError);
   }
 
   private onConnectError(): void {

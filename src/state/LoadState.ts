@@ -6,7 +6,7 @@ export class LoadState extends State {
   private listElement: HTMLElement;
 
   public constructor(assets: Assets) {
-    super('load-gui');
+    super('load-state');
     this.assets = assets;
     this.listElement = document.getElementById('load-list');
   }
