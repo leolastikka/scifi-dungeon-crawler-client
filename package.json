@@ -1,6 +1,9 @@
 {
   "name": "scifi-dungeon-crawler-client",
   "version": "0.0.1",
+  "author": {
+    "name": "Leo Lastikka"
+  },
   "private": true,
   "scripts": {
     "dev": "webpack serve --config ./webpack.dev.js",
