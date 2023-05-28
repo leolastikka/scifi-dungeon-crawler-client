@@ -1,0 +1,138 @@
+body {
+  overflow: hidden;
+  margin: 0 auto;
+  display: grid;
+  max-width: 768px;
+
+  box-sizing: border-box;
+  border-left: 1px solid yellowgreen;
+  border-right: 1px solid yellowgreen;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+body, input, button {
+  font-family: 'Courier New', Courier, monospace;
+  color: yellowgreen;
+  background-color: black;
+}
+
+html,
+body,
+#game-state {
+  height: 100%;
+  position: relative;
+}
+
+#login-state,
+#load-state,
+#connect-state {
+  margin: auto;
+  font-size: 1.4em;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding-left: 1ch;
+}
+
+li {
+  padding-left: 1ch;
+  text-indent: -1ch;
+}
+
+li:before {
+  content: ">";
+  padding-right: 1ch;
+}
+
+input, button {
+  border: 1px solid yellowgreen;
+  font-size: 1em;
+}
+
+button:active {
+  color: black;
+  background-color: yellowgreen;
+}
+
+.game-top-ui {
+  width: 100%;
+  height: 80%;
+}
+
+.game-bottom-ui {
+  width: 100%;
+  height: 20%;
+}
+
+#game-screen,
+#game-panels,
+#game-text,
+#game-controls {
+  outline: 1px solid yellowgreen;
+  float: left;
+}
+
+#game-screen {
+  width: 100%;
+  height: 100%;
+}
+
+.game-menu-nav {
+  position: absolute;
+  bottom: 20%;
+  left: 0;
+  width: 100%;
+  height: 5%;
+  border: 1px solid yellowgreen;
+}
+
+.game-menu-nav button {
+  width: calc(100% / 5);
+  height: 100%;
+  float: left;
+}
+
+#game-text {
+  width: 60%;
+  height: 100%;
+}
+
+#game-controls {
+  width: 40%;
+  height: 100%;
+}
+
+#game-controls button {
+  width: calc(100% / 3);
+  height: calc(100% / 3);
+  float: left;
+}
+
+/* tablet */
+@media only screen and (max-width: 768px) {
+  body {
+    border: none;
+    max-width: 768px;
+  }
+}
+
+/* phone */
+@media only screen and (max-width: 576px) {
+  body {
+    max-width: 576px;
+  }
+  #game-text {
+    width: 0;
+  }
+  #game-controls {
+    width: 100%;
+  }
+}
