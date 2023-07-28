@@ -1,6 +1,6 @@
 import { Clock, Vector2, Vector3 } from 'three';
 import { Connection } from '../Connection';
-import { Entity } from '../Interfaces';
+import { ClientAction, Entity } from '../Interfaces';
 import { World } from '../World';
 import { State } from './State';
 
@@ -16,7 +16,7 @@ export class GameState extends State {
 
   private clock: Clock;
   private world: World;
-  private entity: Entity;
+  private playerEntity: Entity;
   private connection: Connection;
   private onConnectClose: () => void;
   private onConnectError: () => void;
@@ -36,7 +36,7 @@ export class GameState extends State {
     this.turnRightButton = document.getElementById('turn-right');
 
     this.clock = new Clock();
-    this.entity = null;
+    this.playerEntity = null;
     this.world = new World();
     this.connection = connection;
     this.onConnectClose = onConnectClose;
@@ -58,6 +58,7 @@ export class GameState extends State {
   }
 
   public start(): void {
+    this.clock.start();
     this.gameScreen.appendChild(this.world.getCanvas());
     this.onWindowResize();
     this.frameHandle = requestAnimationFrame(this.update);
@@ -65,26 +66,30 @@ export class GameState extends State {
 
   private update(): void {
     this.frameHandle = requestAnimationFrame(this.update);
-    this.world.update();
+    this.world.update(this.clock);
   }
 
   private onMessage(event: MessageEvent): void {
     const data: any = JSON.parse(event.data);
-    // console.log(event.data);
+    console.log(data);
     switch(data.type) {
+    case 'addAction':
+      this.world.addAction(data.action);
+      break;
     case 'addChunks':
       this.world.addChunks(data.chunks);
       break;
     case 'addEntities':
       this.world.addEntities(data.entities);
       break;
-    case 'removeEntity':
+    case 'removeEntities':
       break;
-    case 'updateEntity':
+    case 'updateEntities':
       break;
-    case 'userEntity':
-      this.entity = this.world.getEntityByNetworkId(data.networkId);
-      this.world.setCameraPosition(this.entity.position.clone());
+    case 'removeChunks':
+      break;
+    case 'playerReady':
+      this.playerEntity = this.world.playerReady(data.networkId);
       break;
     }
   }
@@ -92,49 +97,50 @@ export class GameState extends State {
   private onClickMovement(event: MouseEvent): void {
     const movement: string = (event.target as HTMLButtonElement).id;
     let type: string = movement.includes('move') ? 'move' : 'turn';
-    this.world.movePlayer({
-      networkId: this.entity.networkId,
+    let direction: string = movement.replace('move-', '').replace('turn-', '');
+
+    // send move or turn action
+    this.connection.send(JSON.stringify({
+      networkId: this.playerEntity.networkId,
       type: type,
-      movement: movement
-    });
+      direction: direction
+    }));
   }
 
   private onKeyPress(event: KeyboardEvent): void {
     let movement: string;
-    let type: string;
     switch(event.code) {
     case 'KeyW':
       movement = 'move-forward';
-      type = 'move';
       break;
     case 'KeyS':
       movement = 'move-back';
-      type = 'move';
       break;
     case 'KeyA':
       movement = 'move-left';
-      type = 'move';
       break;
     case 'KeyD':
       movement = 'move-right';
-      type = 'move';
       break;
     case 'KeyQ':
       movement = 'turn-left';
-      type = 'turn';
       break;
     case 'KeyE':
       movement = 'turn-right';
-      type = 'turn';
       break;
     default:
       return;
     }
-    this.world.movePlayer({
-      networkId: this.entity.networkId,
+
+    const type: string = movement.includes('move') ? 'move' : 'turn';
+    const direction: string = movement.replace('move-', '').replace('turn-', '');
+
+    // send move or turn action
+    this.connection.send(JSON.stringify({
+      networkId: this.playerEntity.networkId,
       type: type,
-      movement: movement
-    });
+      direction: direction
+    }));
   }
 
   private onWindowResize(): void {
@@ -223,7 +229,7 @@ export class GameState extends State {
     this.world.destructor();
     this.world = null;
     this.clock = null;
-    this.entity = null;
+    this.playerEntity = null;
 
     this.connection.destructor();
     this.connection = null;
