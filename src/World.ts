@@ -92,8 +92,8 @@ export class World {
 
     // Update object3d position in scene.
     if (entity.mesh) {
-      entity.mesh.position.x = entity.position.y
-      entity.mesh.position.z = entity.position.x;
+      entity.mesh.position.x = entity.position.x
+      entity.mesh.position.z = entity.position.y;
     }
 
     // Update camera if this is player entity.
@@ -138,8 +138,8 @@ export class World {
       entity.position = action.startPosition.clone();
       // Update entity's model's position.
       if (entity.mesh) {
-        entity.mesh.position.x = entity.position.y
-        entity.mesh.position.z = entity.position.x;
+        entity.mesh.position.x = entity.position.x
+        entity.mesh.position.z = entity.position.y;
       }
     }
     else if (action.type === 'turn') {
